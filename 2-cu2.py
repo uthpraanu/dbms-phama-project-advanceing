@@ -98,14 +98,20 @@ class Customer_window:
        self.medicen_quantityy.place(x=10,y=345,width=370,height=35)
        self.medicen_quantityy.current(0)
 
-       #=================================delete order button =======================================
+       #=================================delete order button and combobox =======================================
       
        self.order_id=ttk.Combobox(frame2,font=("times new roman",14),state="readonly")
        self.li_delete=["Select"]
        mydb=mysql.connector.connect(host="localhost",user="root",password="123456789", database = "testdb")
        curser = mydb.cursor()
-       query = "select order_id from orders "
-       curser.execute(query)
+
+       query2010 = ("select customer_id from customer_log order by log_id desc limit 1")
+       curser.execute(query2010)
+       self.cust112_id=curser.fetchall()
+       self.cust112_id = self.cust112_id[0][0]
+
+       query = "select order_id from orders where customer_id = %s"
+       curser.execute(query,[self.cust112_id])
        rows1=curser.fetchall()
        for i in range(0, len(rows1)):
            self.li_delete.append(rows1[i][0])
@@ -136,12 +142,12 @@ class Customer_window:
        self.display_table.heading("f",text="order_date")
        self.display_table['show']='headings'
 
-       self.display_table.column("a",width=50)
-       self.display_table.column("b",width=100)
-       self.display_table.column("c",width=100)
-       self.display_table.column("d",width=50)
-       self.display_table.column("e",width=100)
-       self.display_table.column("f",width=50)
+       self.display_table.column("a",width=80)
+       self.display_table.column("b",width=220)
+       self.display_table.column("c",width=120)
+       self.display_table.column("d",width=80)
+       self.display_table.column("e",width=120)
+       self.display_table.column("f",width=80)
        self.display_table.pack(fill=BOTH,expand=1)
        self.refresh()
 
@@ -150,8 +156,15 @@ class Customer_window:
         try:
             mydb=mysql.connector.connect(host="localhost",user="root",password="123456789", database = "testdb")
             curser = mydb.cursor()
-            query = "create view your_order as select order_id,medicine_name,company_name,quantity,medicine_price as medicinr_price_per_packet,order_date from company,medicine,orders where MEDICINE_ID=med_id and COMPANY_ID=com_id "
-            curser.execute(query)
+            
+            query145 = ("select customer_id from customer_log order by log_id desc limit 1")
+            curser.execute(query145)
+            self.cust1266_id=curser.fetchall()
+            self.cust1266_id = self.cust1266_id[0][0]
+
+            
+            query = "create view your_order as select o.order_id, m.medicine_name, c.company_name, o.quantity, m.medicine_price as medicine_price_per_packet ,o.order_date from company as c, medicine as m, orders as o where m.MEDICINE_ID=o.med_id and c.COMPANY_ID=o.com_id and o.customer_id = %s" 
+            curser.execute(query,[self.cust1266_id])
             query ="select * from your_order "
             curser.execute(query)
             rows=curser.fetchall()
@@ -188,14 +201,20 @@ class Customer_window:
                 curser.execute(query,(valu))
                 self.comp_id=curser.fetchall()
                 self.comp_id = self.comp_id[0][0]
+                
                 query = ("select medicine_id from medicine where medicine_name = %s")
                 valu=[self.medicen_name.get()]
                 curser.execute(query,(valu))
                 self.medi_id=curser.fetchall()
                 self.medi_id = self.medi_id[0][0]
 
+                query = ("select customer_id from customer_log order by log_id desc limit 1")
+                curser.execute(query)
+                self.cust122_id=curser.fetchall()
+                self.cust122_id = self.cust122_id[0][0]
+
                 self.today = str(date.today())
-                curser.execute("insert into orders (com_id, med_id, order_date, quantity) values(%s,%s,%s,%s)",(self.comp_id,self.medi_id,self.today,self.medicen_quantityy.get()))
+                curser.execute("insert into orders (customer_id,com_id, med_id, order_date, quantity) values(%s,%s,%s,%s,%s)",(self.cust122_id,self.comp_id,self.medi_id,self.today,self.medicen_quantityy.get()))
                 mydb.commit()
                 mydb.close()
                 messagebox.showinfo("Sucess", "Your order has been registered ")
@@ -236,8 +255,9 @@ class Customer_window:
        self.li_delete=["Select"]
        mydb=mysql.connector.connect(host="localhost",user="root",password="123456789", database = "testdb")
        curser = mydb.cursor()
-       query = "select order_id from orders "
-       curser.execute(query)
+
+       query = "select order_id from orders where customer_id = %s"
+       curser.execute(query,[self.cust112_id])
        rows1=curser.fetchall()
        for i in range(0, len(rows1)):
            self.li_delete.append(rows1[i][0])
