@@ -7,10 +7,10 @@ import os
 
 
 
-class Register:
+class Update_stock:
     def __init__(self,root):
        self.root=root
-       self.root.title(" UPDATE STOCK ")
+       self.root.title(" UPDATE STOCK ---(increase_stock)")
        self.root.geometry("2000x800+0+0")
        self.root.config(bg="white")# WINDOW COLOUR
        #================   Big Image ===============================================
@@ -115,10 +115,10 @@ class Register:
         query3 = "select name_id from log order by log_id desc limit 1"
         curser.execute(query3)
         rows1=curser.fetchall()
-        self.comp_id=rows1[0][0]
+        self.comp_id=int(rows1[0][0])
         
         query = '''select c.company_name, m.medicine_name, s.med_quantity from company as c, medicine as m, stock as s
-                    where s.medicine_id = m.medicine_id and s.company_id = %s and c.company_id = %s'''
+                    where s.medicine_id = m.medicine_id and s.company_id = %s and c.company_id = %s '''
         curser.execute(query,[self.comp_id,self.comp_id])
         rows=curser.fetchall()
         self.display_table.delete(*self.display_table.get_children())
@@ -173,8 +173,14 @@ class Register:
         try :
             mydb=mysql.connector.connect(host="localhost",user="root",password="123456789",database="testdb")
             my_cursor=mydb.cursor()
+
+            query3n = "select name_id from log order by log_id desc limit 1"
+            my_cursor.execute(query3n)
+            rows1n=my_cursor.fetchall()
+            self.comp_id_show=int(rows1n[0][0])
+
             q1 = ('select medicine_name from medicine where medicine_id in (select medicine_id from stock where company_id = %s)')
-            my_cursor.execute(q1,[1])
+            my_cursor.execute(q1,[self.comp_id_show])
             row1=my_cursor.fetchall()
             for i in range(0, len(row1)):
                 self.li1.append(row1[i][0])
@@ -192,5 +198,5 @@ class Register:
 
         
 root=Tk()
-obj=Register(root)
+obj=Update_stock(root)
 root.mainloop()

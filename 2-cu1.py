@@ -2,15 +2,13 @@ from tkinter import*
 from tkinter import ttk,messagebox
 from PIL import Image,ImageTk
 import pymysql
+import mysql.connector
 import os
-#import register.py
 
-
-
-class Register:
+class Customer_sign_in:
     def __init__(self,root):
        self.root=root
-       self.root.title("Register Window")
+       self.root.title("Customer Sign_in ---(2-cu1.py)")
        self.root.geometry("2000x800+0+0")
        self.root.config(bg="white")# WINDOW COLOUR
        #================   Big Image ===============================================
@@ -45,19 +43,46 @@ class Register:
        #====================================================================================================
        
     def register_data(self):
-        if (self.txt_email == "" or self.txt_password == ""):
-            messagebox.showerror("Error","All Fields Are Required to add",parent=self.root)
-        else :    
-            mydb=mysql.connector.connect(host="localhost",user="root",password="123456789",database="testdb")
-            my_cursor=mydb.cursor()  
-            sql="insert into medicine (medicine_name,medicine_price,medicine_quantity,medicine_expiary) values(%s,%s,%s,%s)"
-            val=[self.txt_med_name.get(),self.txt_med_price.get(),self.txt_med_quantity.get(),self.txt_med_exp.get()]
-            my_cursor.execute(sql,val)
-            mydb.commit()
-            mydb.close()
-            messagebox.showinfo("Sucess","Medicen Added",parent=self.root)
-            self.clear()
-            os.system("python 2-cu2.py")
+        try:
+            if (self.txt_email.get() == "" or self.txt_password.get() == ""):
+                messagebox.showerror("Error","You left the box empty",parent=self.root)
+            else :
+                mydb = mysql.connector.connect(host = "localhost", user = "root", password = "123456789", database = "testdb")
+                mycursor = mydb.cursor()
+                
+                sql1="select customer_id,customer_email,customer_name from customer where customer_email = %s"
+                mycursor.execute(sql1,[self.txt_email.get()])
+                room1 =mycursor.fetchall()
+                ls1=[]
+                for i in range(len(room1)):
+                    ls1.append(room1[i])
+
+
+                sql123="select customer_email,customer_password from customer"
+                mycursor.execute(sql123)
+                room123 =mycursor.fetchall()
+                ls123=[]
+                for i in range(len(room123)):
+                    ls123.append(room123[i])
+
+                if (self.txt_email.get(),self.txt_password.get()) not in ls123:
+                    messagebox.showerror('Error',"Crendentials doesn't exist",parent = self.root)
+                    
+                tup1=(self.txt_email.get(),self.txt_password.get())
+                
+                if tup1 in ls123:
+                    sql2="insert into customer_log (customer_id,customer_email,customer_name) values(%s,%s,%s)"
+                    mycursor.execute(sql2,ls1[0])
+                    mydb.commit()
+                    mydb.close()
+                    messagebox.showinfo("Sucess","ID confirmed",parent =self.root)
+                    self.txt_email.delete(0,END)
+                    self.txt_password.delete(0,END)
+                    os.system("python 2-comp2.py")
+                else :
+                    messagebox.showerror("Erroe","Please enter valid information",parent =self.root)
+        except Exception as e:
+            messagebox.showerror("Error",f"error due to {str(e)}",parent=self.root) 
             
 
 
@@ -65,5 +90,5 @@ class Register:
 
         
 root=Tk()
-obj=Register(root)
+obj=Customer_sign_in(root)
 root.mainloop()

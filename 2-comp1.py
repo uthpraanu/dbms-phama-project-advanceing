@@ -2,15 +2,16 @@ from tkinter import*
 from tkinter import ttk,messagebox
 from PIL import Image,ImageTk
 import pymysql
+import mysql.connector
 import os
 #import register.py
 
 
 
-class Register:
+class Company_sing_in:
     def __init__(self,root):
        self.root=root
-       self.root.title("Register Window")
+       self.root.title("Company Sing_in ---(2-comp1.py)")
        self.root.geometry("2000x800+0+0")
        self.root.config(bg="white")# WINDOW COLOUR
        #================   Big Image ===============================================
@@ -28,7 +29,7 @@ class Register:
 
        #===============================NAME================================================
 
-       fname=Label(frame1,text="COMPANY ID",font=("times new roman",16,"bold"),bg="sky blue",fg="black").place(x=20,y=167)
+       fname=Label(frame1,text="NAME",font=("times new roman",18,"bold"),bg="sky blue",fg="black").place(x=29,y=167)
        self.txt_email=Entry(frame1,font=("times new roman",15),bg="lightgray")
        self.txt_email.place(x=160,y=165,width=250,height=40)
 
@@ -45,13 +46,47 @@ class Register:
        #====================================================================================================
        
     def register_data(self):
-        os.system("python new_medicine.py")
-            
+        try:
+            if (self.txt_email.get() == "" or self.txt_password.get() == ""):
+                messagebox.showerror("Error","You left the box empty",parent=self.root)
+            else :
+                mydb = mysql.connector.connect(host = "localhost", user = "root", password = "123456789", database = "testdb")
+                mycursor = mydb.cursor()
+                
+                sql1="select company_id,company_name from company"
+                mycursor.execute(sql1)
+                room1 =mycursor.fetchall()
+                ls1=[]
+                for i in range(len(room1)):
+                    ls1.append(room1[i])
 
+                if (int(self.txt_password.get()),self.txt_email.get()) not in ls1:
+                    messagebox.showerror('Error',"Company doesn't exist",parent = self.root)
 
-        
+                try :
+                    tup1=(int(self.txt_password.get()),self.txt_email.get())
+                except :
+                    messagebox.showerror('Error','You must have entered wrong password : \n       password must be a integer',parent = self.root)
+                    self.txt_email.delete(0,END)
+                    self.txt_password.delete(0,END)
+                    return
+                if tup1 in ls1:
+                    sql2="insert into log (name_id,name) values(%s,%s)"
+                    val=[int(self.txt_password.get()),self.txt_email.get()]
+                    mycursor.execute(sql2,val)
+                    mydb.commit()
+                    mydb.close()
+                    messagebox.showinfo("Sucess","ID confirmed",parent =self.root)
+                    self.txt_email.delete(0,END)
+                    self.txt_password.delete(0,END)
+                    os.system("python 2-comp2.py")
+                else :
+                    messagebox.showerror("Erroe","Please enter valid information",parent =self.root)
+        except Exception as e:
+            messagebox.showerror("Error",f"error due to {str(e)}",parent=self.root)    
+
 
         
 root=Tk()
-obj=Register(root)
+obj=Company_sing_in(root)
 root.mainloop()

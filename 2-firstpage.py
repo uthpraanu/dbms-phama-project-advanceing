@@ -1,16 +1,16 @@
 from tkinter import*
 from tkinter import ttk,messagebox
 from PIL import Image,ImageTk
-import pymysql
 import os
 #import register.py
+#import pymysql
 
 
 
-class Register:
+class First_page:
     def __init__(self,root):
        self.root=root
-       self.root.title("E - PHARMA")
+       self.root.title("E - PHARMA --- (2-firstpage.py)")
        self.root.geometry("2000x800+0+0")
        self.root.config(bg="white")# WINDOW COLOUR
        #================   Big Image ===============================================
@@ -56,5 +56,5 @@ class Register:
 
         
 root=Tk()
-obj=Register(root)
+obj=First_page(root)
 root.mainloop()

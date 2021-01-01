@@ -7,10 +7,10 @@ import os
 
 
 
-class Register:
+class Adding_company:
     def __init__(self,root):
        self.root=root
-       self.root.title("Register Window")
+       self.root.title("Adding Company ---(2-ad2.py)")
        self.root.geometry("2000x800+0+0")
        self.root.config(bg="white")# WINDOW COLOUR
        #================   Big Image ===============================================
@@ -169,5 +169,5 @@ class Register:
 
         
 root=Tk()
-obj=Register(root)
+obj=Adding_company(root)
 root.mainloop()

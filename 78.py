@@ -26,6 +26,6 @@ curser.execute(query1)
 rows=curser.fetchall()
 update(rows)
 
-root.title("My Application")
+root.title("My Medicine ---(78.py)")
 root.geometry("500x500")
 root.mainloop()

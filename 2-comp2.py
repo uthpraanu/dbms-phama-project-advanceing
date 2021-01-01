@@ -1,95 +1,109 @@
-from tkinter import*
-from tkinter import ttk,messagebox
-from PIL import Image,ImageTk
-import pymysql
-import mysql.connector
+from tkinter import *
+from tkinter import Tk,ttk
+from PIL import Image, ImageTk
 import os
+import mysql.connector
 
-
-
-class Register:
+class Company_Page:
     def __init__(self,root):
-       self.root=root
-       self.root.title("Register Window")
-       self.root.geometry("2000x800+0+0")
-       self.root.config(bg="white")# WINDOW COLOUR
-       #================   Big Image ===============================================
+        self.root = root 
+        self.root.title(" Company_Page ---(2-comp2.py) ")
+        self.root.geometry("2000x800+0+0")
+        self.root.config(bg="white")
 
-       self.bg=ImageTk.PhotoImage(file="images\Imj1.jpg")
-       bg=Label(self.root,image=self.bg).place(x=0,y=0,relwidth=1,relheight=1)
+        # ----- Background Image --------------------------------------------------------
 
-       #================= Register Frame ============================================
+        self.bg_image = ImageTk.PhotoImage(file="images\Imj1.jpg") 
+        bg = Label(self.root,image=self.bg_image).place(x=0,y=0,relwidth=1,relheight=1)
 
-       frame1=Frame(self.root,bd=3,relief=RIDGE,bg="light grey")
-       frame1.place(x=450,y=90,width=560,height=650)
+        
+        #-------- FRAME 1 --------------------------------------------------------------------
+
+        frame1 = Frame(self.root, bd = 2, relief = RIDGE, bg = "light blue")
+        frame1.place(x= 120, y= 100, width =380 , height = 550)
+
+        label_f1 = Label(frame1, text=" Choose Your Option", font = ("NEW TIMES ROMAN", 25, "bold"),bg = "light blue",fg ="black").place(x=25, y=32)
+
+        #--------- button --------------
+        
+        self.bt1 = Button(frame1 ,text="Add new Medicine",font=("TIMES NEW ROMAN", 22 ,"bold"),bg="grey",fg="black",cursor="hand2",command=self.new).place(x=50 ,y=150, height = 70 ,width = 280)
+        
+        self.bt2 = Button(frame1 ,text="Increase Stock",font=("TIMES NEW ROMAN", 22 ,"bold"),bg="grey",fg="black",cursor="hand2",command=self.existing).place(x=50 ,y=270, height = 70 ,width = 280)
+
+        self.bt3 = Button(frame1 ,text="Requested Medicine",font=("TIMES NEW ROMAN", 22 ,"bold"),bg="grey",fg="black",cursor="hand2",command=self.request).place(x=50 ,y=390, height = 70 ,width = 280)
 
 
-       title=Label(frame1,text="ADD MEDICEN HERE",font=("times new roman",30,"bold"),bg="light grey",fg="black").place(x=70,y=40)
+        #--------------------frame 2 -----------------------------------------------------------
 
-       
+        frame2 = Frame(self.root, bd = 2, relief = RIDGE, bg = "light blue")
+        frame2.place(x= 540, y= 100, width =880 , height = 550)
+
+        label_f2 = Label(frame2, text=" Your Stock", font = ("NEW TIMES ROMAN", 25, "bold"),bg = "light blue",fg ="black").place(x=350, y=32)
+
+
+        
+        Display_Frame=Frame(frame2,bd=4,relief=RIDGE,bg="white")
+        Display_Frame.place(x=-1,y=120,width=877,height=427)
 
     
-       med_name=Label(frame1,text="MEDICEN NAME",font=("times new roman",16,"bold"),bg="light grey",fg="black").place(x=180,y=125)
-       self.txt_med_name=Entry(frame1,font=("times new roman",15),bg="white")
-       self.txt_med_name.place(x=120,y=180,width=300)
-       
+        scroll_x=Scrollbar(Display_Frame,orient=HORIZONTAL) 
+        scroll_y=Scrollbar(Display_Frame,orient=VERTICAL) 
+        self.display_table=ttk.Treeview(Display_Frame,columns=("a","b","c"),xscrollcommand=scroll_x.set,yscrollcommand=scroll_y.set)
+        scroll_x.pack(side=BOTTOM,fill=X)
+        scroll_y.pack(side=RIGHT,fill=Y)
+        scroll_x.config(command=self.display_table.xview)
+        scroll_y.config(command=self.display_table.yview)
+        self.display_table.heading("a",text="COMPANY NAME")
+        self.display_table.heading("b",text="MEDICINE NAME")
+        self.display_table.heading("c",text="QUANTITY")
+        self.display_table['show']='headings'
 
-        
-        #-----------------------------------------
+        self.display_table.column("a",width=30)
+        self.display_table.column("b",width=30)
+        self.display_table.column("c",width=30)
 
-       comp_id=Label(frame1,text="MEDICEN QUANTITY",font=("times new roman",15,"bold"),bg="light grey",fg="black").place(x=170,y=240)
-       self.txt_med_quantity=Entry(frame1,font=("times new roman",15),bg="white")
-       self.txt_med_quantity.place(x=120,y=285,width=300) 
-       
-
-        #=========================row 2===================================================
-
-       manu=Label(frame1,text="PRICE PER PACKET",font=("times new roman",15,"bold"),bg="light grey",fg="black").place(x=165,y=345)
-       self.txt_med_price=Entry(frame1,font=("times new roman",15),bg="white")
-       self.txt_med_price.place(x=120,y=390,width=300)
-       
-
-       exp=Label(frame1,text="DATE OF EXPIRY",font=("times new roman",15,"bold"),bg="light grey",fg="black").place(x=180,y=450)
-       self.txt_med_exp=Entry(frame1,font=("times new roman",15),bg="white")
-       self.txt_med_exp.place(x=120,y=495,width=300)
+        self.display_table.pack(fill=BOTH,expand=1)
+        self.fetch_data()
 
 
-        #---------------------------Button------------------------------------------------------------------------------------------------
 
-       btn_register=Button(frame1,text="ADD",font=("times new roman",20),bg="grey",fg="white",bd=1,cursor="hand2",command=self.register_data).place(x=135,y=570,width=250,height=45) 
 
-      #============================Condition to take values===========================================================================
-    def clear(self):
-        self.txt_med_name.delete(0,END)
-        self.txt_med_quantity.delete(0,END)
-        self.txt_med_price.delete(0,END)
-        self.txt_med_exp.delete(0,END)                                   
 
-    def register_data(self):
-        x=self.txt_med_exp.get()
-        if self.txt_med_exp.get()=="" or self.txt_med_name=="" or self.txt_med_price.get()=="" or self.txt_med_quantity.get()=="" :
-            messagebox.showerror("Error","All Fields Are Required",parent=self.root)  
-        elif x[4]!="-" or x[7]!="-" :
-            messagebox.showerror("Error","Correct Format Required",parent=self.root) 
-        else : 
-            try :
-              mydb=mysql.connector.connect(host="localhost",user="root",password="123456789",database="testdb")
-              my_cursor=mydb.cursor()  
-              sql="insert into medicine (medicine_name,medicine_price,medicine_quantity,medicine_expiary) values(%s,%s,%s,%s)"
-              val=[self.txt_med_name.get(),self.txt_med_price.get(),self.txt_med_quantity.get(),self.txt_med_exp.get()]
-              my_cursor.execute(sql,val)
-              mydb.commit()
-              mydb.close()
-              messagebox.showinfo("Sucess","Medicen Added",parent=self.root)
-              self.clear()
+    def new(self):
+        os.system("python add_new_medicine.py")
+    def existing(self):
+        os.system("python increase_stock.py")
+    def request(self):
+        os.system("python requested_medicine.py")
 
-            except Exception as e:
-               messagebox.showerror("Error",f"Error due to : {str(e)}",parent=self.root)
-        
-        
-        
+    def fetch_data(self):
+        mydb=mysql.connector.connect(host="localhost",user="root",password="123456789", database = "testdb")
+        curser = mydb.cursor()
+        query3 = "select name_id from log order by log_id desc limit 1"
+        curser.execute(query3)
+        rows1=curser.fetchall()
+        self.comp_id=int(rows1[0][0])
+        query = '''select c.company_name, m.medicine_name, s.med_quantity from company as c, medicine as m, stock as s
+                    where s.medicine_id = m.medicine_id and s.company_id = %s and c.company_id = %s'''
+        curser.execute(query,[self.comp_id,self.comp_id])
+        rows=curser.fetchall()
+        self.display_table.delete(*self.display_table.get_children())
+        for i in rows :
+            self.display_table.insert('' ,'end' ,values=i)
+        mydb.commit()
+        mydb.close()
 
-        
-root=Tk()
-obj=Register(root)
+
+
+
+    def refresh(self):
+        self.com_vlu["values"]=self.fetch_company()
+
+
+
+
+
+
+root = Tk()
+obj = Company_Page(root)
 root.mainloop()

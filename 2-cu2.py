@@ -10,10 +10,10 @@ from datetime import date
 
 
 
-class Register:
+class Customer_window:
     def __init__(self,root):
        self.root=root
-       self.root.title("Register Window")
+       self.root.title("customer Window ---(2-cu2.py)")
        self.root.geometry("2000x800+0+0")
        self.root.config(bg="white")# WINDOW COLOUR
        #================   Big Image ===============================================
@@ -248,5 +248,5 @@ class Register:
 
         
 root=Tk()
-obj=Register(root)
+obj=Customer_window(root)
 root.mainloop()

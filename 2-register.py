@@ -10,7 +10,7 @@ import os
 class Register:
     def __init__(self,root):
        self.root=root
-       self.root.title("Register Window")
+       self.root.title("Register Window  --- (2-register.py)")
        self.root.geometry("2000x800+0+0")
        self.root.config(bg="white")# WINDOW COLOUR
        #================   Big Image ===============================================
@@ -108,7 +108,7 @@ class Register:
             try :
               mydb=mysql.connector.connect(host="localhost",user="root",password="123456789",database="testdb")
               my_cursor=mydb.cursor()  
-              sql="insert into coustomer (coustomer_name,coustomer_address,coustomer_contact,coustomer_email,coustomer_question,coustomer_answer,coustomer_password) values(%s,%s,%s,%s,%s,%s,%s)"
+              sql="insert into customer (customer_name,customer_address,customer_contact,customer_email,customer_question,customer_answer,customer_password) values(%s,%s,%s,%s,%s,%s,%s)"
               val=[self.txt_fname.get(),self.txt_lname.get(),self.txt_contact.get(),self.txt_email.get(),self.cmb_quest.get(),self.txt_answer.get(),self.txt_password.get()]
               my_cursor.execute(sql,val)
               mydb.commit()
