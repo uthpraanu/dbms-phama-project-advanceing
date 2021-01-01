@@ -60,9 +60,6 @@ class Company_sing_in:
                 for i in range(len(room1)):
                     ls1.append(room1[i])
 
-                if (int(self.txt_password.get()),self.txt_email.get()) not in ls1:
-                    messagebox.showerror('Error',"Company doesn't exist",parent = self.root)
-
                 try :
                     tup1=(int(self.txt_password.get()),self.txt_email.get())
                 except :
@@ -70,6 +67,10 @@ class Company_sing_in:
                     self.txt_email.delete(0,END)
                     self.txt_password.delete(0,END)
                     return
+
+                if (int(self.txt_password.get()),self.txt_email.get()) not in ls1:
+                    messagebox.showerror('Error',"Company doesn't exist",parent = self.root)
+                    
                 if tup1 in ls1:
                     sql2="insert into log (name_id,name) values(%s,%s)"
                     val=[int(self.txt_password.get()),self.txt_email.get()]

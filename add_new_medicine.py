@@ -10,7 +10,7 @@ import os
 class Add_new_medicine:
     def __init__(self,root):
        self.root=root
-       self.root.title("Register Window")
+       self.root.title("Add New Medicine")
        self.root.geometry("2000x800+0+0")
        self.root.config(bg="white")# WINDOW COLOUR
        #================   Big Image ===============================================
@@ -70,18 +70,60 @@ class Add_new_medicine:
         if self.txt_med_exp.get()=="" or self.txt_med_name=="" or self.txt_med_price.get()=="" or self.txt_med_quantity.get()=="" :
             messagebox.showerror("Error","All Fields Are Required",parent=self.root)  
         elif x[4]!="-" or x[7]!="-" :
-            messagebox.showerror("Error","Correct Format Required",parent=self.root) 
+            messagebox.showerror("Error","Correct Format Required as YYYY-MM-DD",parent=self.root) 
         else : 
             try :
               mydb=mysql.connector.connect(host="localhost",user="root",password="123456789",database="testdb")
               my_cursor=mydb.cursor()  
-              sql="insert into medicine (medicine_name,medicine_price,medicine_quantity,medicine_expiary) values(%s,%s,%s,%s)"
-              val=[self.txt_med_name.get(),self.txt_med_price.get(),self.txt_med_quantity.get(),self.txt_med_exp.get()]
-              my_cursor.execute(sql,val)
-              mydb.commit()
-              mydb.close()
-              messagebox.showinfo("Sucess","Medicen Added",parent=self.root)
-              self.clear()
+
+              self.table = []
+              sql92211 = 'select medicine_name from medicine '
+              my_cursor.execute(sql92211)
+              rows95111 = my_cursor.fetchall()
+              for i in range(len(rows95111)):
+                self.table.append(rows95111[i][0])
+
+
+              if self.txt_med_name.get() in self.table :
+                sql44 = 'select name_id from log order by log_id desc limit 1'
+                my_cursor.execute(sql44)              
+                row147 = my_cursor.fetchall()
+                self.rows147 = row147[0][0]
+
+                sql4455 = 'select medicine_id from medicine where medicine_name = %s'
+                my_cursor.execute(sql4455,[self.txt_med_name.get()])              
+                row14755 = my_cursor.fetchall()
+                self.rows14755 = row14755[0][0]
+
+                self.lst = []
+                sql922 = 'select m.medicine_name from medicine as m, stock as s where s.company_id = %s and m.medicine_id = s.medicine_id '
+                my_cursor.execute(sql922,[self.rows147])
+                rows951 = my_cursor.fetchall()
+                for i in range(len(rows951)):
+                    self.lst.append(rows951[i][0])
+
+
+                if self.txt_med_name.get() not in self.lst:
+                    squery = "insert into stock (company_id,medicine_id,med_quantity) values (%s,%s,%s) "
+                    my_cursor.execute(squery,[self.rows147,self.rows14755,self.txt_med_quantity.get()])
+                    mydb.commit()
+                    self.clear()
+                    messagebox.showinfo("Sucess","Medicen Added",parent=self.root)
+                    return
+                else :
+                    messagebox.showerror("Error","Medicine already exists",parent=self.root)
+
+            
+              else :  
+
+                #trig = "create triger"
+                sql="insert into medicine (medicine_name,medicine_price,medicine_quantity,medicine_expiary) values(%s,%s,%s,%s)"
+                val=[self.txt_med_name.get(),self.txt_med_price.get(),self.txt_med_quantity.get(),self.txt_med_exp.get()]
+                my_cursor.execute(sql,val)
+                mydb.commit()
+                mydb.close()
+                messagebox.showinfo("Sucess","Medicen Added",parent=self.root)
+                self.clear()
 
             except Exception as e:
                messagebox.showerror("Error",f"Error due to : {str(e)}",parent=self.root)
