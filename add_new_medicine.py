@@ -115,11 +115,23 @@ class Add_new_medicine:
 
             
               else :  
-
-                #trig = "create triger"
                 sql="insert into medicine (medicine_name,medicine_price,medicine_quantity,medicine_expiary) values(%s,%s,%s,%s)"
                 val=[self.txt_med_name.get(),self.txt_med_price.get(),self.txt_med_quantity.get(),self.txt_med_exp.get()]
                 my_cursor.execute(sql,val)
+                mydb.commit()
+
+                sql44 = 'select name_id from log order by log_id desc limit 1'
+                my_cursor.execute(sql44)              
+                row147 = my_cursor.fetchall()
+                self.rows147 = row147[0][0]
+
+                sql44 = 'select medicine_id from medicine order by medicine_id desc limit 1'
+                my_cursor.execute(sql44)              
+                row147 = my_cursor.fetchall()
+                self.rows1471 = row147[0][0]
+
+                sql14587 = "insert into stock values(%s,%s,%s)"
+                my_cursor.execute(sql14587,[self.rows147,self.rows1471,self.txt_med_quantity.get()])
                 mydb.commit()
                 mydb.close()
                 messagebox.showinfo("Sucess","Medicen Added",parent=self.root)
