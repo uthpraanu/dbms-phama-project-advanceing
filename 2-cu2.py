@@ -218,9 +218,13 @@ class Customer_window:
 
                 self.today = str(date.today())
                 curser.execute("insert into orders (customer_id,com_id, med_id, order_date, quantity) values(%s,%s,%s,%s,%s)",(self.cust122_id,self.comp_id,self.medi_id,self.today,self.medicine_quantityy.get()))
+                
                 mydb.commit()
                 mydb.close()
-                messagebox.showinfo("Sucess", "Your order has been registered ")
+
+                self.alter_stock_minus()
+
+                messagebox.showinfo("Sucess", "Your order has been registered ",parent = self.root)
                 self.refresh()
                 self.refresh2()
                 self.medicine_name.current(0)
@@ -241,6 +245,9 @@ class Customer_window:
             try :
                 mydb=mysql.connector.connect(host="localhost",user="root",password="123456789",database="testdb")
                 curser=mydb.cursor()
+
+                self.alter_stock_plus()
+
                 query="delete from orders where order_id = %s"
                 val=[self.order_id.get()]
                 curser.execute(query,val)
@@ -295,6 +302,81 @@ class Customer_window:
         else :
             return(1)
 
+    def alter_stock_plus(self):
+        mydb = mysql.connector.connect(host='localhost',user='root',password='123456789',database ='testdb')
+        my_cursor = mydb.cursor()
+
+        print(1)
+
+        query152 = ("select com_id from orders where order_id = %s")
+        valu152=[self.order_id.get()]
+        my_cursor.execute(query152,valu152)
+        self.comp_id152=my_cursor.fetchall()
+        self.comp_id152 = self.comp_id152[0][0]
+        print(self.comp_id152)
+
+        print(2)
+        
+        query251 = ("select med_id from orders where order_id = %s")
+        valu251=[self.order_id.get()]
+        my_cursor.execute(query251,valu251)
+        self.medi_id251=my_cursor.fetchall()
+        self.medi_id251 = self.medi_id251[0][0]
+        print(self.medi_id251)
+
+        print(3)
+
+        sql987 = "select quantity from orders where order_id = %s"
+        my_cursor.execute(sql987,[self.order_id.get()])
+        self.qua=my_cursor.fetchall()
+        self.qua = self.qua[0][0]
+
+        print(4)
+
+        sql11 = 'update stock set med_quantity = med_quantity + %s where company_id = %s and medicine_id = %s '
+        va = [self.qua,self.comp_id152,self.medi_id251]
+        my_cursor.execute(sql11,va)
+        mydb.commit()
+        mydb.close()
+        print(5)
+
+    def alter_stock_minus(self):
+        mydb = mysql.connector.connect(host='localhost',user='root',password='123456789',database ='testdb')
+        my_cursor = mydb.cursor()
+
+        print(6)
+
+        query152 = ("select company_id from company where company_name = %s")
+        valu152=[self.medicine_company.get()]
+        my_cursor.execute(query152,valu152)
+        self.comp_id152=my_cursor.fetchall()
+        self.comp_id152 = self.comp_id152[0][0]
+
+        print(7)
+        
+        query251 = ("select medicine_id from medicine where medicine_name = %s")
+        valu251=[self.medicine_name.get()]
+        my_cursor.execute(query251,valu251)
+        self.medi_id251=my_cursor.fetchall()
+        self.medi_id251 = self.medi_id251[0][0]
+
+        print(8)
+
+        sql987 = "select med_quantity from stock where company_id = %s and medicine_id = %s"
+        my_cursor.execute(sql987,[self.comp_id152,self.medi_id251])
+        self.qua=my_cursor.fetchall()
+        self.qua = self.qua[0][0]
+
+        print(9)
+
+        sql11 = 'update stock set med_quantity = med_quantity - %s where company_id = %s and medicine_id = %s '
+        va = [self.qua,self.comp_id152,self.medi_id251]
+        my_cursor.execute(sql11,va)
+
+        mydb.commit()
+        mydb.close()
+
+        print(10)
 
 
         
