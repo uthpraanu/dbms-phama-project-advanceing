@@ -43,10 +43,10 @@ class Customer_window:
 
        #=================================view order button =======================================
 
-       delete_order=Button(frame1,text="Medicine price",font=("times new roman",18),bg="lightgrey",bd=1,cursor="hand2",command=self.med_it).place(x=250,y=540,width=180,height=80)
+       delete_order=Button(frame1,text="Medicine stock",font=("times new roman",18),bg="lightgrey",bd=1,cursor="hand2",command=self.med_it).place(x=250,y=540,width=180,height=80)
 
 
-       #=============================== Frame 3 and Medicen name Buttons/combobox =====================================================
+       #=============================== Frame 3 and medicine name Buttons/combobox =====================================================
        frame3=Frame(self.root,bd=4,relief=RIDGE,bg="light grey")
        frame3.place(x=155,y=180,width=400,height=400)
 
@@ -62,10 +62,10 @@ class Customer_window:
        for i in range(0, len(rows2)):
            self.li_med.append(rows2[i][0])
 
-       self.medicen_name=ttk.Combobox(frame3,font=("times new roman",14),state="readonly")
-       self.medicen_name['values']=self.li_med
-       self.medicen_name.place(x=10,y=75,width=370,height=35)
-       self.medicen_name.current(0)
+       self.medicine_name=ttk.Combobox(frame3,font=("times new roman",14),state="readonly")
+       self.medicine_name['values']=self.li_med
+       self.medicine_name.place(x=10,y=75,width=370,height=35)
+       self.medicine_name.current(0)
 
         #================================ Company name buttton =======================================================================
 
@@ -80,10 +80,10 @@ class Customer_window:
        for i in range(0, len(rows1)):
            self.li_comp.append(rows1[i][0])
 
-       self.medicen_company=ttk.Combobox(frame3,font=("times new roman",14),state="readonly")
-       self.medicen_company['values']=self.li_comp
-       self.medicen_company.place(x=10,y=210,width=370,height=35)
-       self.medicen_company.current(0)
+       self.medicine_company=ttk.Combobox(frame3,font=("times new roman",14),state="readonly")
+       self.medicine_company['values']=self.li_comp
+       self.medicine_company.place(x=10,y=210,width=370,height=35)
+       self.medicine_company.current(0)
 
         #================================= QUANTITY ===================================================================================
 
@@ -93,10 +93,10 @@ class Customer_window:
        for i in range(10,101,10):
            self.list_1.append(i)
 
-       self.medicen_quantityy=ttk.Combobox(frame3,font=("times new roman",14),state="readonly")
-       self.medicen_quantityy['values']=self.list_1
-       self.medicen_quantityy.place(x=10,y=345,width=370,height=35)
-       self.medicen_quantityy.current(0)
+       self.medicine_quantityy=ttk.Combobox(frame3,font=("times new roman",14),state="readonly")
+       self.medicine_quantityy['values']=self.list_1
+       self.medicine_quantityy.place(x=10,y=345,width=370,height=35)
+       self.medicine_quantityy.current(0)
 
        #=================================delete order button and combobox =======================================
       
@@ -190,20 +190,23 @@ class Customer_window:
        
 
     def order_it(self):
-        if self.medicen_company.get()=="Select" or self.medicen_name.get()=="Select" or self.medicen_quantityy.get()=="Select" :
+        if self.medicine_company.get()=="Select" or self.medicine_name.get()=="Select" or self.medicine_quantityy.get()=="Select" :
             messagebox.showerror("Error","Please fill all the fields ",parent=self.root)
         else :
             try :
+                t=self.quantity_avalable()
+                if t == 0:
+                    return
                 mydb=mysql.connector.connect(host="localhost", user="root", password="123456789", database = "testdb")
                 curser=mydb.cursor()
                 query = ("select company_id from company where company_name = %s")
-                valu=[self.medicen_company.get()]
+                valu=[self.medicine_company.get()]
                 curser.execute(query,(valu))
                 self.comp_id=curser.fetchall()
                 self.comp_id = self.comp_id[0][0]
                 
                 query = ("select medicine_id from medicine where medicine_name = %s")
-                valu=[self.medicen_name.get()]
+                valu=[self.medicine_name.get()]
                 curser.execute(query,(valu))
                 self.medi_id=curser.fetchall()
                 self.medi_id = self.medi_id[0][0]
@@ -214,21 +217,21 @@ class Customer_window:
                 self.cust122_id = self.cust122_id[0][0]
 
                 self.today = str(date.today())
-                curser.execute("insert into orders (customer_id,com_id, med_id, order_date, quantity) values(%s,%s,%s,%s,%s)",(self.cust122_id,self.comp_id,self.medi_id,self.today,self.medicen_quantityy.get()))
+                curser.execute("insert into orders (customer_id,com_id, med_id, order_date, quantity) values(%s,%s,%s,%s,%s)",(self.cust122_id,self.comp_id,self.medi_id,self.today,self.medicine_quantityy.get()))
                 mydb.commit()
                 mydb.close()
                 messagebox.showinfo("Sucess", "Your order has been registered ")
                 self.refresh()
                 self.refresh2()
-                self.medicen_name.current(0)
-                self.medicen_company.current(0)
-                self.medicen_quantityy.current(0)
+                self.medicine_name.current(0)
+                self.medicine_company.current(0)
+                self.medicine_quantityy.current(0)
             except Exception as e :
                 messagebox.showerror("Error", f'error due to : {str(e)}', parent=self.root)
 
 
     def med_it(self):
-        os.system("python 78.py")
+        os.system("python medicine_stock.py")
         
         
     def delete_it(self):
@@ -264,7 +267,35 @@ class Customer_window:
        self.order_id['values']=self.li_delete
 
 
-        
+    def quantity_avalable(self):
+        mydb = mysql.connector.connect(host='localhost',user='root',password='123456789',database ='testdb')
+        my_cursor = mydb.cursor()
+
+        sql1 = 'select medicine_id from medicine where medicine_name = %s'
+        my_cursor.execute(sql1,[self.medicine_name.get()])
+        rowq = my_cursor.fetchall()
+        self.rowq = rowq[0][0]
+
+        sql2 = 'select company_id from company where company_name = %s'
+        my_cursor.execute(sql2,[self.medicine_company.get()])
+        rowq2 = my_cursor.fetchall()
+        self.rowq2 = rowq2[0][0]
+
+        sql3 = 'select * from stock where medicine_id = %s and company_id = %s'
+        my_cursor.execute(sql3,[self.rowq,self.rowq2])
+        rowq3 = my_cursor.fetchall()
+        self.rowq3 = rowq3[0][2]
+
+        t=self.medicine_quantityy.get()
+
+        if int(t) > int(self.rowq3) :
+            messagebox.showerror('Error',f'Not sufficent {self.medicine_name.get()} stock in {self.medicine_company.get()}',parent = self.root)
+            self.med_it()
+            return(0)
+        else :
+            return(1)
+
+
 
         
 root=Tk()
