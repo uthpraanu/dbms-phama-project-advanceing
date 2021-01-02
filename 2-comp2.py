@@ -71,10 +71,13 @@ class Company_Page:
 
     def new(self):
         os.system("python add_new_medicine.py")
+        self.fetch_data()
     def existing(self):
         os.system("python increase_stock.py")
+        self.fetch_data()
     def request(self):
         os.system("python requested_medicine.py")
+        self.fetch_data()
 
     def fetch_data(self):
         mydb=mysql.connector.connect(host="localhost",user="root",password="123456789", database = "testdb")
