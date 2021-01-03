@@ -11,6 +11,11 @@ class Admin_sing_in:
     def __init__(self,root):
        self.root=root
        self.root.title("Admin_sing_in ---2ad1.py")
+       
+       self.ig=ImageTk.PhotoImage(file="images\ic.jpg")
+       
+       self.root.iconphoto(False, self.ig) 
+
        self.root.geometry("2000x800+0+0")
        self.root.config(bg="white")# WINDOW COLOUR
        #================   Big Image ===============================================

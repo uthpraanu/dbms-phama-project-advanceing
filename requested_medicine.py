@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import ttk 
 from tkinter import messagebox
 import mysql.connector
+from PIL import Image,ImageTk
 
 def update(rows):
     trv.delete(*trv.get_children())
@@ -36,5 +37,13 @@ rows=curser.fetchall()
 update(rows)
 
 root.title("Requested Medicine ---(requested_medicine.p)")
+ig=ImageTk.PhotoImage(file="images\ic.jpg")
+       
+root.iconphoto(False, ig)
+
+ig=ImageTk.PhotoImage(file="images\ic.jpg")
+       
+root.iconphoto(False, ig)
+
 root.geometry("500x300")
 root.mainloop()

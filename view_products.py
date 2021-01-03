@@ -1,8 +1,13 @@
 import mysql.connector
 import tkinter  as tk 
 import pymysql
-from tkinter import * 
+from tkinter import *
+from PIL import Image,ImageTk
+
 my_w = tk.Tk()
+ig=ImageTk.PhotoImage(file="images\ic.jpg")
+       
+root.iconphoto(False, ig)
 my_w.geometry("400x250") 
 my_connect = mysql.connector.connect(
   host="localhost",

@@ -14,6 +14,11 @@ class Customer_window:
     def __init__(self,root):
        self.root=root
        self.root.title("customer Window ---(2-cu2.py)")
+
+       self.ig=ImageTk.PhotoImage(file="images\ic.jpg")
+       
+       self.root.iconphoto(False, self.ig) 
+
        self.root.geometry("2000x800+0+0")
        self.root.config(bg="white")# WINDOW COLOUR
        #================   Big Image ===============================================
