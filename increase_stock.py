@@ -11,6 +11,11 @@ class Update_stock:
     def __init__(self,root):
        self.root=root
        self.root.title(" UPDATE STOCK ---(increase_stock)")
+
+       self.ig=ImageTk.PhotoImage(file="images\ic.jpg")
+       
+       self.root.iconphoto(False, self.ig) 
+
        self.root.geometry("2000x800+0+0")
        self.root.config(bg="white")# WINDOW COLOUR
        #================   Big Image ===============================================

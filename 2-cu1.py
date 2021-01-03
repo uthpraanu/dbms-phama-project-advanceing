@@ -9,6 +9,11 @@ class Customer_sign_in:
     def __init__(self,root):
        self.root=root
        self.root.title("Customer Sign_in ---(2-cu1.py)")
+
+       self.ig=ImageTk.PhotoImage(file="images\ic.jpg")
+       
+       self.root.iconphoto(False, self.ig)
+
        self.root.geometry("2000x800+0+0")
        self.root.config(bg="white")# WINDOW COLOUR
        #================   Big Image ===============================================

@@ -8,6 +8,10 @@ class Company_Page:
     def __init__(self,root):
         self.root = root 
         self.root.title(" Company_Page ---(2-comp2.py) ")
+
+        self.ig=ImageTk.PhotoImage(file="images\ic.jpg")
+       
+        self.root.iconphoto(False, self.ig)
         self.root.geometry("2000x800+0+0")
         self.root.config(bg="white")
 

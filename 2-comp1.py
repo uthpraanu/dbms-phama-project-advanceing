@@ -12,6 +12,11 @@ class Company_sing_in:
     def __init__(self,root):
        self.root=root
        self.root.title("Company Sing_in ---(2-comp1.py)")
+
+       self.ig=ImageTk.PhotoImage(file="images\ic.jpg")
+       
+       self.root.iconphoto(False, self.ig) 
+
        self.root.geometry("2000x800+0+0")
        self.root.config(bg="white")# WINDOW COLOUR
        #================   Big Image ===============================================
@@ -70,7 +75,7 @@ class Company_sing_in:
 
                 if (int(self.txt_password.get()),self.txt_email.get()) not in ls1:
                     messagebox.showerror('Error',"Company doesn't exist",parent = self.root)
-                    
+
                 if tup1 in ls1:
                     sql2="insert into log (name_id,name) values(%s,%s)"
                     val=[int(self.txt_password.get()),self.txt_email.get()]
