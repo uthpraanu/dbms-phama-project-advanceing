@@ -46,7 +46,8 @@ class Choice_of_medicine:
        
 
     def register_data(self):
-        pass
+        os.system('python pdf.py')
+        messagebox.showinfo('Sucess','Presciption uploaded ',parent = self.root)
 
     def ad_signin_data(self):
         os.system('python 2-cu2.py')

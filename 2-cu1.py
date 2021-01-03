@@ -83,7 +83,7 @@ class Customer_sign_in:
                     messagebox.showinfo("Sucess","ID confirmed",parent =self.root)
                     self.txt_email.delete(0,END)
                     self.txt_password.delete(0,END)
-                    os.system("python 2-cu2.py")
+                    os.system("choice_of_medicine.py")
                 else :
                     messagebox.showerror("Erroe","Please enter valid information",parent =self.root)
         except Exception as e:
